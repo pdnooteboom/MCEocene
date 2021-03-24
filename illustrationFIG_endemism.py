@@ -176,20 +176,24 @@ def subplot(ax, lons38, lats38, land,  blons, blats, Rloc, lonsPD, latsPD,
               loc='lower center',bbox_to_anchor=(0.25, -0.3, 0.5, 0.5))
 
 def subplot2(ax, temp, fs=25, sc=150, title='', th=16):
-    dics = {'$^{\circ}C$':temp,
+    dics = {'$^{\circ}$C':temp,
             'endemic':np.full(len(temp), 'yes')}
-    dics['endemic'][dics['$^{\circ}C$']>th] = 'no'
+    dics['endemic'][dics['$^{\circ}$C']>th] = 'no'
     
     dics = pd.DataFrame.from_dict(dics)
     print(dics)
     sns.histplot(dics,
-                 x='$^{\circ}C$', hue='endemic', ax=ax,
+                 x='$^{\circ}$C', hue='endemic', ax=ax,
                  binwidth=1, binrange = [13,23])
     ax.yaxis.tick_right()
     ax.yaxis.set_label_position("right")
     
     ax.set_title(title, fontsize=fs)
 
+    side = ax.spines["left"]
+    side.set_visible(False)
+    side = ax.spines["top"]
+    side.set_visible(False)
 
 
 #%% Load a field from the model. To plot the land.
