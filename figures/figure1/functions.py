@@ -406,7 +406,6 @@ def add_min90_bath(bath, lon, lat, val=-90):
     bath = np.concatenate((np.ones((1,bath.shape[1])), bath), axis=0)
     lat = np.concatenate((np.full((1,bath.shape[1]), val), lat), axis=0)
     lon = np.concatenate((lon[0][np.newaxis,:], lon), axis=0)
-
     return bath, lon, lat
 
 def add_low_end(bath, lon, lat, val=-90):
@@ -435,13 +434,13 @@ def subplotPT(ax, lons38, lats38, land, vLons, vLats, perc,
 
     ax.set_boundary(circle, transform=ax.transAxes)
     ax.add_feature(cfeature.OCEAN, zorder=0, color='k')
-    ax.add_feature(cfeature.LAND, zorder=0, color='k')
+  #  ax.add_feature(cfeature.LAND, zorder=0, color='k')
     ax.text(60, -30, title, dict(size=fs) , transform=ccrs.Geodetic())
     
     ax.set_extent(exte38, ccrs.PlateCarree())
     ax.pcolormesh(lons38, lats38, land, transform=projection, 
-                   vmin=0, vmax=1.2,cmap='gist_earth',zorder=2
-                         )
+                  vmin=0, vmax=1.2,cmap='gist_earth',zorder=2
+                  )
     
     land2 = copy(land)
     land2[np.isnan(land2)] = 0
@@ -481,5 +480,82 @@ def subplotPT(ax, lons38, lats38, land, vLons, vLats, perc,
                  cmap=cmapd,
                  s=sc, vmin=0, vmax=100, 
                  zorder=5, edgecolors='k', linewidth=2)
+    
+    return p, p0
+
+def subplotPT_ocm(ax, lons38, lats38, land, vLons, vLats, perc, 
+            fs=20, exte38=[],
+            projection=ccrs.PlateCarree(), cmap='viridis', sites={}, title=''):
+    
+    theta = np.linspace(0, 2*np.pi, 100)
+    center, radius = [0.5, 0.5], 0.5
+    verts = np.vstack([np.sin(theta), np.cos(theta)]).T
+    circle = mpath.Path(verts * radius + center)
+    
+    sc = 150 # scatter size of cores
+
+    ax.set_boundary(circle, transform=ax.transAxes)
+    ax.add_feature(cfeature.OCEAN, zorder=0, color=cmap(0))
+    ax.add_feature(cfeature.LAND, zorder=0, color=cmap(0))
+    ax.text(60, -30, title, dict(size=fs) , transform=ccrs.Geodetic())
+    
+    ax.set_extent(exte38, ccrs.PlateCarree())
+    
+    land2 = copy(land)
+
+    # ax.pcolormesh(lons38, lats38, land, transform=projection, 
+    #               vmin=0, vmax=1.4,cmap='Greys',zorder=2,
+    #   #            extent= exte38
+    #                     )
+    
+    land2[np.isnan(land2)] = 0
+    X, Y, masked_MDT = z_masked_overlap(
+        ax, lons38, lats38, land2,
+        source_projection=ccrs.Geodetic())
+    
+    ax.contour(X, Y, masked_MDT, [0.5], colors='k', zorder=3, linewidth=2)
+    
+    land = np.ma.masked_where(np.isnan(land), land)
+    
+    X, Y, land = z_masked_overlap(
+        ax, lons38, lats38, land,
+        source_projection=ccrs.Geodetic())
+    ax.contourf(X, Y, land, levels=10, #transform=projection, 
+                   vmin=0, vmax=1.5,cmap='Greys',zorder=2,
+       #            extent= exte38
+                         )    
+    
+    perc, vLons, vLats = add_low_end(perc, vLons, vLats)
+    perc[np.logical_and(perc==100, vLats>-50)] = 0
+    p = ax.scatter(vLons[perc>0], vLats[perc>0], c=perc[perc>0], transform=projection, 
+                   cmap=cmap, vmin=0, vmax=100, zorder=1)
+    if(title[-3]=='L'):
+        tc = 'k'
+        idx = np.where(sites['plotname']==1)
+        for i in range(len(idx[0])):#sites['names'])):
+            if(sites['names'][idx[0][i]] in ['SanB','ODP1090']):
+                bb =dict(facecolor='white', alpha=0.75, edgecolor='w')
+                ax.text(sites['plon'][idx[0][i]]-5, sites['plat'][idx[0][i]]+2, 
+                         sites['names'][idx[0][i]],
+                         transform=projection,horizontalalignment='right',
+                         color=tc, bbox=bb, zorder=3001, fontsize=15)
+            elif(sites['names'][idx[0][i]] in ['TK']):
+                bb =dict(facecolor='white', alpha=0.75, edgecolor='w')
+                ax.text(sites['plon'][idx[0][i]]-5, sites['plat'][idx[0][i]]+2, 
+                         sites['names'][idx[0][i]],
+                         transform=projection,horizontalalignment='left',
+                         color=tc, bbox=bb, zorder=3001, fontsize=15)
+            else:
+                bb =dict(facecolor='white', alpha=0.75, edgecolor='w')
+                ax.text(sites['plon'][idx[0][i]]+5, sites['plat'][idx[0][i]], 
+                         sites['names'][idx[0][i]],
+                         transform=projection,horizontalalignment='right',
+                         color=tc, bbox=bb, zorder=3001, fontsize=15)
+    
+    p0= ax.scatter(sites['plon'], sites['plat'], c=sites['endemic (%)'],
+                 transform=ccrs.PlateCarree(),
+                 cmap=cmap,
+                 s=sc, vmin=0, vmax=100, 
+                 zorder=5, edgecolors='w', linewidth=2)
     
     return p, p0

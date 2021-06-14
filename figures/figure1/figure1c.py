@@ -17,8 +17,8 @@ import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-sp = 6
-config = '4pic'
+sp = 25
+config = '2pic'
 sns.set(context='paper',style="white",font="Arial",font_scale=2)
 fs = 20
 font = {'size'   : fs}
@@ -152,24 +152,25 @@ if(config=='2pic'):
     temps, FHR, Tths[3], Fh, esH, vLonstopH, vLatstopH, percH, iminH = fu.loopSSThat(sites2,
                     config=config, tb=tbH, sp=sp)
 
-    fu.subplot(ax13, temps, sites2,
-                 Fh, vLonstopH, vLatstopH, percH, FHR,
-                 title='(a)', config='2pic', res='HR', cmap=cmap, fs=fs)
-    fu.subplot(ax14, temps, sites2,
-                 Fl, vLonstopL, vLatstopL, percL, FLR, 
-                 title='(c)', config='2pic', res='LR', cmap=cmap, fs=fs)
+    if(True):
+        fu.subplot(ax13, temps, sites2,
+                     Fh, vLonstopH, vLatstopH, percH, FHR,
+                     title='(a)', config='2pic', res='HR', cmap=cmap, fs=fs)
+        fu.subplot(ax14, temps, sites2,
+                     Fl, vLonstopL, vLatstopL, percL, FLR, 
+                     title='(c)', config='2pic', res='LR', cmap=cmap, fs=fs)
 if(config=='4pic'):
     temps, FLR, Tths[2], Fl, esL, vLonstopL, vLatstopL, percL, iminL = fu.loopSSThat(sites4,config=config,
                     res='LR', tb=tbL, sp=sp)
     temps, FHR, Tths[3], Fh, esH, vLonstopH, vLatstopH, percH, iminH = fu.loopSSThat(sites4,
                 config=config, tb=tbH, sp=sp)
-
-    fu.subplot(ax13, temps, sites4, 
-                 Fh, vLonstopH, vLatstopH, percH, FHR,
-                 title='(a)',config='4pic', res='HR', cmap=cmap, fs=fs)
-    fu.subplot(ax14, temps, sites4,
-                 Fl, vLonstopL, vLatstopL, percL, FLR,
-                 title='(c)', config='4pic', res='LR', cmap=cmap, fs=fs)
+    if(True):
+        fu.subplot(ax13, temps, sites4, 
+                     Fh, vLonstopH, vLatstopH, percH, FHR,
+                     title='(a)',config='4pic', res='HR', cmap=cmap, fs=fs)
+        fu.subplot(ax14, temps, sites4,
+                     Fl, vLonstopL, vLatstopL, percL, FLR,
+                     title='(c)', config='4pic', res='LR', cmap=cmap, fs=fs)
 
 axcb = fig.add_subplot(spec[6, 0], label='21')
 
@@ -197,21 +198,32 @@ matplotlib.rc('font', **font)
 projection = ccrs.SouthPolarStereo(25)
 
 #%%
-co = plt.cm.Set1(np.linspace(0, 1, 100))[:44]
-cmap_masks = mcolors.LinearSegmentedColormap.from_list('my_colormap',co)
+def plot_color_gradients(cmap):
+    gradient = np.linspace(0, 1, 256)
+    gradient = np.vstack((gradient, gradient))
+    # Create figure and adjust figure height to number of colormaps
+    nrows = 1
+    figh = 0.35 + 0.15 + (nrows + (nrows - 1) * 0.1) * 0.22
+    fig, axs = plt.subplots(nrows=nrows + 1, figsize=(6.4, figh))
+    fig.subplots_adjust(top=1 - 0.35 / figh, bottom=0.15 / figh,
+                        left=0.2, right=0.99)
 
-co0 = plt.cm.Greys(np.linspace(0, 1, 125))[-1:]
-co00 = plt.cm.Greys(np.linspace(0, 1, 125))[-33:-30]
-co01 = plt.cm.Greens(np.linspace(0, 1, 105))[::-1][5:]
-colors = np.vstack((co0,co00, co01))
-cmap_perc = mcolors.LinearSegmentedColormap.from_list('my_colormap',colors)
+    axs[0].imshow(gradient, aspect='auto', cmap=cmap)
 
-co00 = plt.cm.RdPu(np.linspace(0, 1, 100))[64:65]
-co2 = plt.cm.BrBG(np.linspace(0, 1, 100))[50:80][::-1]
 
-co2 = np.vstack((co00,co2))
+    # Turn off *all* ticks & spines, not just the ones with colormaps.
+    for ax in axs:
+        ax.set_axis_off()
+        
+#co = plt.cm.hsv(np.linspace(0, 1, 200))[30:90]
+#co2 = plt.cm.hsv(np.linspace(0, 1, 100))[:2]
+co = plt.cm.coolwarm(np.linspace(0, 1, 200))[140:-10][::-1]
+co2 = plt.cm.YlGnBu(np.linspace(0, 1, 100))[-2:][::-1]
+
+co2 = np.vstack((co2,co))
 co2 = mcolors.LinearSegmentedColormap.from_list('my_colormap',co2)
-
+cmap_perc = co2
+#plot_color_gradients(co2)
 #%% Load a field from the model. To plot the land.
 
 dirReadHR = '/Volumes/HD/Eocene/output/time_mean/'
@@ -230,12 +242,13 @@ lons38 = lons38[np.min(idxlat[0]):np.max(idxlat[0]), np.min(idxlon[0]):np.max(id
 land = np.full(bath38.shape, np.nan); land[bath38==0] = 1;
 land, lons38, lats38 = fu.add_min90_bath(land, lons38, lats38)
 
+
 #%%
 
 ax21 = fig.add_subplot(spec[:3, 1:], label='12', projection=projection)
 ax22 = fig.add_subplot(spec[3:6, 1:], label='13', projection=projection)
 axcb23 = fig.add_subplot(spec[7, 1], label='21')
-axcb33 = fig.add_subplot(spec[8, 1], label='22')
+#axcb33 = fig.add_subplot(spec[8, 1], label='22')
 fraction=0.01; pad=0.01;
 
 if(config=='2pic'):
@@ -243,17 +256,17 @@ if(config=='2pic'):
 else:
     sites = sites4
 
-p, p0 = fu.subplotPT(ax22, lons38, lats38, land, vLonstopL, vLatstopL,
+p, p0 = fu.subplotPT_ocm(ax22, lons38, lats38, land, vLonstopL, vLatstopL,
                      percL[iminL],
                      fs=fs, 
-                     exte38=exte38,  cmap=cmap_perc, cmapd=co2, sites=sites,
+                     exte38=exte38,  cmap=cmap_perc, sites=sites,
                      title='(d) LR'+config[0])
 
-p, p0 = fu.subplotPT(ax21, lons38, lats38, land, vLonstopH, vLatstopH,
-                     percH[iminH],
-                     fs=fs, 
-                     exte38=exte38,  cmap=cmap_perc, cmapd=co2, sites=sites,
-                     title='(b) HR'+config[0])
+p, p0 = fu.subplotPT_ocm(ax21, lons38, lats38, land, vLonstopH, vLatstopH,
+                      percH[iminH],
+                      fs=fs, 
+                      exte38=exte38,  cmap=cmap_perc, sites=sites,
+                      title='(b) HR'+config[0])
 
 axins = inset_axes(axcb23,
                 width="80%",  
@@ -262,23 +275,23 @@ axcb23.axis("off")
 cbar = plt.colorbar(p0,fraction=fraction, pad=pad, 
                     orientation="horizontal", cax=axins)
 cbar.ax.tick_params(labelsize=fs)
-cbar.ax.set_title('endemism (data; %)', fontsize=fs)
+cbar.ax.set_title('endemism (%)', fontsize=fs)
 cbar.set_ticks([0, 20, 40, 60, 80, 100])
 cbar.set_ticklabels(['', '', '', '', '', ''])
 
 
-axins = inset_axes(axcb33,
-                width="80%",
-                height="100%")
-axcb33.axis("off")
+# axins = inset_axes(axcb33,
+#                 width="80%",
+#                 height="100%")
+# axcb33.axis("off")
 cbar = plt.colorbar(p,fraction=fraction, pad=pad, 
                     orientation="horizontal", cax=axins)
 cbar.ax.tick_params(labelsize=fs)
-cbar.ax.set_xlabel('endemism (model; %)', fontsize=fs)
+#cbar.ax.set_xlabel('endemism (model; %)', fontsize=fs)
     
 #%%
 
 if(True):
-    plt.savefig('figure1.png',bbox_inches='tight',
+    plt.savefig('figure1_%s_%d.png'%(config, sp),bbox_inches='tight',
                 pad_inches=0)#, dpi=100
 plt.show()
