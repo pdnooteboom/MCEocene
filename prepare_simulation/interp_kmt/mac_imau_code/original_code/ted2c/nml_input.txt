@@ -1,0 +1,5 @@
+&control
+xdim = 3600
+ydim = 2400
+kmt_file = kmt_pbc.bedmap.openGib_nolakes
+/

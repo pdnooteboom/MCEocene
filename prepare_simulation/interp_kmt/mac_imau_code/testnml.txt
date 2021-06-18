@@ -1,0 +1,6 @@
+&control
+xdim = 320
+ydim = 384
+kmt_file = kmt.gx1.eocene_baatsen.da
+zoomBoxSize = 100
+/

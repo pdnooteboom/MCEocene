@@ -1,0 +1,20 @@
+
+&test
+b = false
+ l = 12345
+f  = 42.
+nbcNEWS = 5, 0,1,0
+computers = NEC,  IBM, HP
+i = -11
+c = x
+d = 32.1747e2
+
+s = "new c-string"
+s = "new string"
+/
+
+a = -99
+&test2
+i2 =  17
+	f2   =  15.   
+/

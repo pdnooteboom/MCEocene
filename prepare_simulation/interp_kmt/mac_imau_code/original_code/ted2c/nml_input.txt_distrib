@@ -1,0 +1,6 @@
+&control
+xdim = 200
+ydim = 100
+kmt_file = kmt1280
+zoomBoxSize = 100
+/

@@ -1,0 +1,46 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue0;
+}
+{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000\c0;\cssrgb\c0\c1\c1;\cssrgb\c0\c0\c0;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww30940\viewh10180\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Procedure to create the grid of the 0.1 deg resolution 38 MA grid, forcing fields and initialisation fields:\
+\
+1. make_grid_pop_tx0.1_38ma.py\
+\
+The script makes the 38MA grid by deforming the present-day tripolar 0.1 deg grid, such that the poles are located on the land and all ocean is captured by the grid.\
+The new grid is written as \'91grid_coordinates_pop_tx0.1_38ma.nc\'92\
+\
+2. interp_kmt/make_bathymetry.py\
+\
+The script interpolates the bathymetry \'91TopoBathy38.nc\'92 (the bathymetry reconstruction from Baatsen et al. 2017) on the newly obtained grid.\
+The new bathymetry is written as \'91bathymetry.nc\'92\
+\
+3. interp_kmt/make_kmt.py\
+\
+From the new bathymetry, the kmt file is determined here. Also, it points out locations (such as narrow gateways) which will have to be adapted manually in iTed. \
+The kmt file is written as \'91kmt_tx0.1_POP_EO38.nc\'92 , and has to be checked (after conversion to a binary file) manually in iTed (see the \'91mac_imau_code\'92 folder). \
+After the manual check, it is saved a\cb2 s \'91
+\f1\fs26 \cf3 \CocoaLigature0 kmt_tx0.1_POP_EO38_new.bin.swapped_final\'92
+\f0\fs24 \CocoaLigature1  \cf0 , an\cb1 d conversed back to a netcdf file called \'91kmt_tx0.1_POP_EO38_new.bin.swapped_final.nc\'92\
+\
+4. forcing_fields/bulk_forcing/interp_bulkforcing.py\
+\
+The climatological forcing fields at the surface from CESM are interpolated on the 38MA 0.1 deg grid. \
+The cubic interpolation is performed over the whole grid, to assure that the spatial derivates are smooth. \
+The forcing is written as 'bulkforcing_pop_38MA.nc\'92 . This file contains all the fields which are needed for the bulk equation option and the restoring option. \
+\
+5. forcing_fields/bulk_forcing/Interpolate_tau.py\
+\
+This python script is used to interpolate the wind stress fields tau_x and tau_y and writes these in TAU.nc. \
+\
+6. init_velden/interp_init.py\
+\
+(Ru\cf3 n\cf4  in 
+\f1\fs26 \cb2 \CocoaLigature0 /projects/0/palaeo-parcels/tx0.1_POP_EO38/init_files/
+\f0\fs24 \CocoaLigature1 )\cf0 \cb1 \
+The initial files (e.g. temperature, salt) are interpolated (some 2D at the surface and others 3D), using a nearest neighbour interpolation.\
+The finally written restart file is \'91spinup_38MA_pop_tx01.nc\'92}

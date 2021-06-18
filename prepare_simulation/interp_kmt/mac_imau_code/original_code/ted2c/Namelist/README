@@ -1,0 +1,37 @@
+				Documentation of Namelist routines
+
+This software package is designed to simulate the Fortran Namelist feature, by 
+implementing two classes in C++, one called Item and the other called Namelist. 
+Namelist is a collection of  "items".  Those routines are used as follows:
+
+	// Declare and initialize variables that will apper in Namelist
+	long l = 34523;
+	int i = 11;
+	char c = 'k';
+	float f = 20.;
+	double d = -4.e3;
+	string s("sample string");
+	
+	// Set up Namelist 'test' by adding items and their components
+	// The name of the object and its sole argument must agree exactly for the
+	// software to work properly.  A namelist is constructed as follows: 
+	
+	Namelist test("test");	// Creates a namelist called "test"
+	test.item("l", &l);		// Adds an item 'l' of type 'long' at address &l
+	test.item("i", &i);		// The location pointed to already contains the 
+	test.item("c", &c);		// initial value, which will be overwritten if  
+	test.item("f", &f);		// the name-value pair is found in the namelist
+	test.item("d", &d);		// The new value is written directly into the  
+	test.item("s", &s);		// location specified by the pointer.	
+
+	test.print("initial values");	// Writes out the type, name, and value of 
+									// each item in the namelist
+	int ifile = 0;
+	if (argc == 1) 
+		test.read("inTest.nml");	// Reads the input file 'inTest.nml', parses 
+	else							// each line until the requested namelist name
+		while (++ifile < argc)		// is found and the name = value pairs are 
+			test.read(argv[ifile]); // evaluated and acted upon.
+	
+	test.print("final values");
+

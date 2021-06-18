@@ -1,0 +1,105 @@
+README file for iTed, the Interactive Topography EDitor.
+
+-------- Readme text added by Michael Kliphuis --------
+You have just untarred the file iTed_imau.tar and the code in this directory is suitable for most but perhaps
+all IMAU Mac machines. the code in subdirectory original_code contains (tadaaaa) the original iTed code. 
+Just for your information (you don't need to do this!) I had to make the code modifications shown below to make it work on my local IMAU Mac machine
+
+Compile the program by simply typing:
+make clean
+make
+
+this generates an executable iTed
+
+The file testnml.text is a so called namelist file containing the arguments for iTed, i.e.
+the name of the binary kmt file, in this case kmt.gx1.eocene_baatsen.da
+and the dimension of the POP grid, in this case 320x384 gridpoints
+
+-------- RUN iTed --------
+Then run the program by typing:
+./iTed testnml.txt
+When you run the program you get 2 screens, the first being the original 320x384 grid and the second a zoomed in part of that grid (black at first).
+In the original grid you need to click somewhere to zoom in on that part. After clicking you see that part in the second screen.
+The kmt values however do not look correct, instead of being a value between 0 (land) and 60, you see values like 167772160.
+This has to do with endianess of the machine. The kmt file is a big endian file and the Mac is a little endian machine meaning that
+the bits are read in reverse order. Unfortunately g++ does not have a compiler flag -mbig-endian for the g++ i386 platform version (my Mac is a i386 machine)
+that would cause iTed to read in the kmt file in reverse bit order.
+To overcome this problem I added a program swap.f90 with which you can swap the bytes of your kmt file.
+compile it as follows:
+
+gfortran swap.f90 -o swap
+
+And then run it by typing
+
+./swap kmt.gx1.eocene_baatsen.da 491520
+so the first argument is the file and the second argument the size of the file
+
+This generates a file kmt.gx1.eocene_baatsen.da.out.
+In testnml.txt then add .out after kmt.gx1.eocene_baatsen.da and rerun iTed. (I notices that the values are good now but the continent values look weird.
+Perhaps because the spread in values is a lot smaller (no 0 to 60 instead of 0 to 1006632960)
+
+--------  ZOOM in --------
+You can then zoom in even more by clicking on the right mouse button and select e.g. 50x50 meaning that you only want to see the 50x50 gridpoints in the middle of the zoomed in part.
+
+-------- MODIFY KMT VALUES -------- 
+You can modify kmt values by selecting a gridpoint and click on the middle mouse button. In the terminal you are asked for the new value, enter this value and click enter and the
+modification can immediately be seen in both screens. 
+
+-------- SAVE TO NEW FILE --------
+After making your modifications save to a new file by clicking on the right mouse button and select save.
+In the terminal you are then asked to enter a name for the file you want to save.
+ 
+--------  Needed code modifications --------
+I had to modify the original code as follows to make it work on my IMAU Mac machine with gcc version 4.8.5 (MacPorts gcc48 4.8.5_0)
+in Namelist/Namelist.cpp 
+at line 13, add
+#include <cstring>
+
+in TopoData.cpp at line 2, add
+#include <cstdint>
+#include <cstring>
+#include <climits>
+
+in Utilities/Utilities.cpp at line 12, add
+#include <cstring>
+then make comment of lines 12, i.e. put // in front of it
+//#include <cctype>
+and uncomment line 13 and 14, i.e. remove the //
+#include <typeinfo>
+#include <cstdlib>
+
+in makefile chnage line 10
+CC = g++ -std=gnu++11 
+into
+CC = g++
+
+-------- Original README text --------
+Written 2/9/2006 by Bob Malone (semi-retired, LANL, CCS-2).
+
+This code was originally written in C++ by Pat McCormick (LANL, Advanced Computing Laboratory, CCS-1) for use on IRIX workstations. Now (Feb 2006) IRIX has gone away, so the obvious choice was MacOSX 10.4 (Tiger). In the process of converting the code to run on the Mac, I made the following changes:
+	(1) I gave the code a (new?) name, using Apple’s time-proven strategy of taking a Keyword or two and putting an ‘i’ in front (iMac, iPod, iPhoto,..).
+	(2) I replaced the “cmdline” user interface with a C++ emulation of Fortran’s Namelist interface that I wrote several years ago for use in C++ codes.  It has the important advantage that code users, who are mostly Fortran users, will generally know better how to use it. 
+	(3) I added “zoomBoxSize” to the “control” namelist. Its default value is 25 (units?).
+
+SYSTEM REQUIREMENTS: First of all, you need a Mac with a G4 or G5 processor running MAC OS X 10.3 or later. Second, you have to install the Apple Developer’s Toolkit.  It comes free of charge on the same DVD when you buy (or bought) your latest MAC OS X upgrade. This gives you access to the GNU compiler suite and the OpenGL libraries.
+
+INSTALLING: after un’tar’ing the sourcefile, it is necessary to do 3 separate ‘make’s. First cd into the Utilities subdirectory and run ‘make’. Then cd into the Namelist subdirectory and run ‘make’. Finally “cd ..” back to the main directory and run a third ‘make’ to compile and build iTed.  
+
+USAGE: Once the code is built, two input files are required to run:
+	(A) A tiny text file containing the namelist input (see example below). Its default name is “nml_input.txt”. If you have a file by that name in the same subdirectory as iTed, the code will automoatically open it, if you just type
+		iTed  (or ./iTed, if necessary).
+If you want to use another input file, say, test_v18j.txt, then type:
+		iTed test_v18j.txt
+or
+		iTed test_v18j.txt > output
+which permits redirection of stdout to the print file “output”. Note that this is NOT the same as:
+		iTed < test_v18j.txt
+which redirects the contents of test_v18j.txt into the <cstdio> style with    “cin >> variable”. A sample input file follows:
+			&control
+			xdim =1280
+			ydim = 896
+			kmt_file = kmt1280
+			zoomBoxSize = 100
+			/
+The name of the namelist is “control” and is preceeded by an ampersand (&). The end of the namelist input is denoted by the ‘/’.  In normal applications, the file would contain multiple namelists with different names and parameters.
+	(B) The second file contains the pixilated gridpoints of the specified grid. Colors distinguish the deptb variations. iTed permits the user to “edit” the ocean bottom depths. The name of this file used in the code is “kmt_file” and its name appears in the control namelist. Note that no quotation marks are needed on the right-hand side of the equal sign, if the string is purely alphanumeric and contains no spaces. 
