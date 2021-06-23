@@ -445,29 +445,41 @@ def spatial_subplot(ax,grid_x, grid_y, bath, exte = [], title = '',
     
     ax.set_extent(exte, ccrs.PlateCarree())
 
+    bath = np.ma.masked_where(np.isnan(bath), bath)
     X, Y, masked_MDT = z_masked_overlap(ax, grid_x, grid_y, 
                                         bath,
                                         source_projection=ccrs.Geodetic())
-    im2 = plt.pcolormesh(X, Y, masked_MDT, cmap=cmap, 
-                         vmin=vsbath[0], vmax=vsbath[1],
-                         )
+    im2 = plt.pcolor(X, Y, masked_MDT, cmap=cmap, 
+                          vmin=vsbath[0], vmax=vsbath[1],
+                          )
+    #im2 = ax.contourf(X, Y, masked_MDT,
+    #                  levels=[-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3],
+    #                  cmap=cmap, 
+    #                     vmin=vsbath[0], vmax=vsbath[1],
+    #                     )
     
     land = np.full(bath.shape, 0); land[bath>10**20] = 1;land[bath==0] = 1;
-    land[bath.mask] = 1;land[np.isnan(bath)] = 1;
+    land[bath.mask] = 1;
+    land[np.isnan(bath)] = 1;
     land[bath<-1e20] = 1;
     
     ax.contour(grid_x, grid_y, land, [1], colors='k',
                          zorder=300, transform=ccrs.PlateCarree(),
                          )
     land = np.full(bath.shape, np.nan); land[bath>10**20] = 1;land[bath==0] = 1;
-    land[bath.mask] = 1;land[np.isnan(bath)] = 1;
+    land[bath.mask] = 1;
+    land[np.isnan(bath)] = 1;
     land[bath<-1e20] = 1;
     
     X, Y, land = z_masked_overlap(ax, grid_x, grid_y, 
                                         land,
                                         source_projection=ccrs.Geodetic())
     
-    plt.pcolormesh(X, Y, land,  
+#    plt.pcolormesh(X, Y, land,  
+#                   vmin=0, vmax=1.7,cmap='binary',
+#                         zorder=2
+#                         )
+    plt.contourf(X, Y, land,  
                    vmin=0, vmax=1.7,cmap='binary',
                          zorder=2
                          )

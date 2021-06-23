@@ -246,7 +246,7 @@ ax2.annotate('Kuroshio', xy=(170, 37), xytext=(200,30), fontsize=15,
                             edgecolor='k',
                             alpha=0.95)
             )
-ax2.annotate('Agulhas', xy=(50, -37), xytext=(70,-30), fontsize=15,
+ax2.annotate('Agulhas', xy=(47, -40), xytext=(70,-30), fontsize=15,
             bbox=bb, zorder=3001,
             xycoords=ccrs.PlateCarree()._as_mpl_transform(ax2),
             arrowprops=dict(facecolor='red', arrowstyle='simple',

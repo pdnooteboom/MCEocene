@@ -156,7 +156,7 @@ fHPD = bathPD
 dirReadHR = '/Volumes/HD/Eocene/output/time_mean/final/'
 nc38 = Dataset(dirReadHR + 'pop_38Ma_2pic_merT_avgyear23to27.nc')
 lats38 = nc38['ULAT'][:]
-lons38 = nc38['ULONG'][:]
+lons38 = nc38['ULONG'][:]+25
 lons38[lons38<0] += 360
 if((minlon<180 and maxlon>180)):
     exte38 = [minlon-360, maxlon-360, minlat38, maxlat]
@@ -181,7 +181,7 @@ bathPD4 = (ncPDgrid['TEMP'][0])
 dirReadHR = '/Volumes/HD/Eocene/output/time_mean/final/'
 nc38 = Dataset(dirReadHR + 'pop_38Ma_4pic_merT_avgyear23to27.nc')
 lats384 = nc38['ULAT'][:]
-lons384 = nc38['ULONG'][:]
+lons384 = nc38['ULONG'][:]+25
 lons384[lons384>180.01] -= 360
 lons384[lons384<0] += 360
 
@@ -219,6 +219,15 @@ zonaltempHR4 = np.nanmean(bath384, axis=1)
 zonaltempLR4 = np.nanmean(bathPD4, axis=1)
 
 bath4 = bath384 - bathPD4
+
+bath4[bath4 < -10**10] = np.nan
+bath[bath < -10**10] = np.nan
+#%%
+#plt.pcolormesh(bath4, vmin=-3, vmax=3)
+#plt.colorbar()
+#plt.show()
+
+#assert False
 #%% start figure
 
 print('start figure')
@@ -303,8 +312,8 @@ file4 = '/Volumes/HD/Eocene/output/time_mean/final/cesm_38Ma_4pic_avg%dyears.nc'
 file24 = '/Volumes/HD/Eocene/output/time_mean/final/pop_38Ma_4pic_merT_avgyear23to27.nc'
 #%
 
-panell = {'2pic':['(b)', '(c)','(g) HR2','(h) LR2'],
-          '4pic':['(e)', '(f)','(i) HR4','(j) LR4']}
+panell = {'2pic':['(b)', '(c) 38-34Ma proxy data','(g) HR2','(h) LR2'],
+          '4pic':['(e)', '(f) 42-38Ma proxy data','(i) HR4','(j) LR4']}
 
 # Define the inner grids
 
