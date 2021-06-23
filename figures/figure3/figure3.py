@@ -225,7 +225,7 @@ gs01 = gs0[1].subgridspec(len(plotnames)+1, 2, hspace=0.25)
 
 for pn in range(len(plotnames)):
     ax = fig.add_subplot(gs01[pn, 0])
-    ax.set_ylabel('Sv', fontsize=fs)
+    ax.set_ylabel('Volume\ntransport\n(Sv)', fontsize=fs)
     plt.setp(ax.get_yticklabels(), fontsize=fs)
     if(pn==0):
         ax.plot(timet, transports[plotnames[pn]],
@@ -302,7 +302,7 @@ ax1.set_xlim(0,years)
 ax1.set_xlabel('year', fontsize=fs)
 for tick in ax1.xaxis.get_major_ticks():
     tick.label.set_fontsize(fs) 
-ax1.set_ylabel('Sv', fontsize=fs) 
+ax1.set_ylabel('Volume\ntransport\n(Sv)', fontsize=fs) 
 plt.setp(ax1.get_yticklabels(), fontsize=fs)
 ax1.set_title('(g) MOC', fontsize=fs)
 
