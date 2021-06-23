@@ -18,7 +18,7 @@ import cartopy.crs as ccrs
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 sp = 25
-config = '2pic'
+config = '4pic'
 sns.set(context='paper',style="white",font="Arial",font_scale=2)
 fs = 20
 font = {'size'   : fs}
@@ -293,5 +293,5 @@ cbar.ax.tick_params(labelsize=fs)
 
 if(True):
     plt.savefig('figure1_%s_%d.png'%(config, sp),bbox_inches='tight',
-                pad_inches=0)#, dpi=100
+                pad_inches=0, dpi=250)
 plt.show()

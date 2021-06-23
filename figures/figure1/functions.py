@@ -295,8 +295,8 @@ def subplot(ax, temps, sites,
     ax.set_yticks([2, 4 , 6, 8])
     if(title!='(a)'):
         ax.set_xlabel('# wrong', fontsize=fs)
-    else:
-        ax.set_xticklabels([])   
+#    else:
+#        ax.set_xticklabels([])   
     ax.set_ylabel('distance (10$^{3}$ km)', fontsize=fs)
      
     ax.set_xticks([0,3, 6, 9, 12])
