@@ -19,7 +19,6 @@ import matplotlib.path as mpath
 from matplotlib import gridspec
 from scipy.interpolate import griddata
 import pandas as pd
-from matplotlib.lines import Line2D
 
 def z_masked_overlap(axe, X, Y, Z, source_projection=None):
     """
@@ -170,21 +169,21 @@ def subplot(ax, lons38, lats38, land,  blons, blats, Rloc, lonsPD, latsPD,
                            markersize=15)]
     
     ax.legend(custom_lines, ['SST ($^{\circ}$C)',
-                             'threshold SST ($^{\circ}$C)',
+                             r"$\widehat{\rm SST}$ ($^{\circ}$C)",
                              'back-tracked origin location',
                              'release location'],
-              loc='lower center',bbox_to_anchor=(0.25, -0.3, 0.5, 0.5))
+              loc='lower center',bbox_to_anchor=(0.25, -0.35, 0.5, 0.5))
 
 def subplot2(ax, temp, fs=25, sc=150, title='', th=16):
-    dics = {'$^{\circ}$C':temp,
+    dics = {'SST ($^{\circ}$C)':temp,
             'endemic':np.full(len(temp), 'yes')}
-    dics['endemic'][dics['$^{\circ}$C']>th] = 'no'
+    dics['endemic'][dics['SST ($^{\circ}$C)']>th] = 'no'
     
     dics = pd.DataFrame.from_dict(dics)
     print(dics)
     sns.histplot(dics,
-                 x='$^{\circ}$C', hue='endemic', ax=ax,
-                 binwidth=1, binrange = [13,23])
+                 x='SST ($^{\circ}$C)', hue='endemic', ax=ax,
+                 binwidth=1, binrange = [13,23], stat='density')
     ax.yaxis.tick_right()
     ax.yaxis.set_label_position("right")
     
@@ -200,7 +199,7 @@ def subplot2(ax, temp, fs=25, sc=150, title='', th=16):
 minlat = -90
 maxlat = -40
 minlon = 1
-maxlon = 359#179#
+maxlon = 360#179#
 minlat38 = -90
 projection = ccrs.SouthPolarStereo(25)
 
