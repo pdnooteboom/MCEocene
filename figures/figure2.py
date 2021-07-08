@@ -209,7 +209,7 @@ fig = plt.figure(figsize=(10,10))
 ax = plt.subplot(211, projection=projection)#EqualEarth(180))#Robinson(180))#
 im2 = one_subplot(bathPD, grid_x, grid_y, ax, exte=exte38, cmap=cmap, 
                   vmin=vsbath[0], vmax=vsbath[1],
-                lonticks=lonticks, latticks=latticks, title='(a) 1$^{\circ}$ resolution',
+                lonticks=lonticks, latticks=latticks, title='(a) LR4, 1$^{\circ}$ resolution',
                 fs = fs)
 
 ax.annotate('DP', xy=(-70, -63), xytext=(-120,-70), fontsize=15,
@@ -230,7 +230,7 @@ ax.annotate('TG', xy=(150, -60), xytext=(90,-73), fontsize=15,
 ax2 = plt.subplot(212, projection=projection)
 im2 = one_subplot(bath38, grid_x, grid_y, ax2, exte=exte38, cmap=cmap, 
                   vmin=vsbath[0], vmax=vsbath[1],
-                lonticks=lonticks, latticks=latticks, title='(b) 0.1$^{\circ}$ resolution',
+                lonticks=lonticks, latticks=latticks, title='(b) HR4, 0.1$^{\circ}$ resolution',
                 fs = fs)
 ax2.annotate('EAC', xy=(160, -37), xytext=(164,-25), fontsize=15,
             bbox=bb, zorder=3001,

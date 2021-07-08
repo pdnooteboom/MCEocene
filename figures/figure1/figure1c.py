@@ -18,7 +18,7 @@ import cartopy.crs as ccrs
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 sp = 25
-config = '4pic'
+config = '2pic'
 sns.set(context='paper',style="white",font="Arial",font_scale=2)
 fs = 20
 font = {'size'   : fs}
