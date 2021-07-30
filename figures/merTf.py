@@ -132,7 +132,7 @@ def nearest_int(T, latm, lonm, lond, latd, res='HR'):
     Td = griddata(points, values, (lond, latd), method='nearest')
     return Td.flatten()
  
-def model_uncertainty(T, latm, lonm, lond, latd, deg = 2, res='HR'):
+def model_uncertainty(T, latm, lonm, lond, latd, deg = 3, res='HR'):
     # deg determines the degree box that is used to calculate the uncertainty
     # in the model due to the paleolocation
     # first nearest interpolate land values
@@ -157,9 +157,12 @@ def model_uncertainty(T, latm, lonm, lond, latd, deg = 2, res='HR'):
     for i in range(len(resl)):
         distances = (lond[i]-lonmf)**2+(latd[i]-latmf)**2
         arg = np.argmin(distances)
-        idx = np.where(np.logical_and(np.logical_and(np.logical_and(lonmf>=lonmf[arg]-deg,lonmf<=lonmf[arg]+deg),
-                                                     latmf>=latmf[arg]-deg),
-                latmf<=latmf[arg]+deg))
+ #       idx = np.where(np.logical_and(np.logical_and(np.logical_and(lonmf>=lonmf[arg]-deg,lonmf<=lonmf[arg]+deg),
+#                                                     latmf>=latmf[arg]-deg),
+#                latmf<=latmf[arg]+deg))
+        dist = np.sqrt((lonmf-lonmf[arg])**2+(latmf-latmf[arg])**2)
+        
+        idx = np.where(dist<=deg)
         resl[i] = np.min(T[idx])
         resh[i] = np.max(T[idx])
         

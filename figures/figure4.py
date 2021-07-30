@@ -270,7 +270,8 @@ cbar = fig.colorbar(im2, ax=cbar_ax, orientation = 'horizontal', fraction = 0.8,
 
 cbar_ax.set_visible(False)
 #    cbar.ax.xaxis.set_label_position('right')
-cbar.ax.set_ylabel('$^{\circ}$C', fontsize=fs, rotation=-90)
+cbar.ax.set_ylabel('$^{\circ}$C', fontsize=fs, rotation='horizontal')
+cbar.ax.yaxis.set_label_coords(-0.1, -0.3)
 cbar.ax.tick_params(labelsize=fs)
 
 #legend
