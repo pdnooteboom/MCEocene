@@ -222,12 +222,7 @@ bath4 = bath384 - bathPD4
 
 bath4[bath4 < -10**10] = np.nan
 bath[bath < -10**10] = np.nan
-#%%
-#plt.pcolormesh(bath4, vmin=-3, vmax=3)
-#plt.colorbar()
-#plt.show()
 
-#assert False
 #%% start figure
 
 print('start figure')
@@ -269,7 +264,6 @@ cbar = fig.colorbar(im2, ax=cbar_ax, orientation = 'horizontal', fraction = 0.8,
                     aspect=18, extend='both')
 
 cbar_ax.set_visible(False)
-#    cbar.ax.xaxis.set_label_position('right')
 cbar.ax.set_ylabel('$^{\circ}$C', fontsize=fs, rotation='horizontal')
 cbar.ax.yaxis.set_label_coords(-0.1, -0.3)
 cbar.ax.tick_params(labelsize=fs)
@@ -279,9 +273,9 @@ custm = [Line2D([0], [0], markeredgecolor='k', markerfacecolor='k',
                 lw=0, marker='x', markersize=15),
         Line2D([0], [0], markeredgecolor='k', markerfacecolor='k', 
                 lw=0, marker='+', markersize=15)]
-#    assert False
+#
 
-ax.legend(custm, ['38-34Ma proxies', '42-38Ma proxies'],
+ax.legend(custm, ['38–34 Ma proxies', '42–38 Ma proxies'],
           bbox_to_anchor=(.25, 1.41), loc='upper right',prop={'size':fs-4})
 
 custm = [Line2D([0], [0], color='k',
@@ -313,8 +307,8 @@ file4 = '/Volumes/HD/Eocene/output/time_mean/final/cesm_38Ma_4pic_avg%dyears.nc'
 file24 = '/Volumes/HD/Eocene/output/time_mean/final/pop_38Ma_4pic_merT_avgyear23to27.nc'
 #%
 
-panell = {'2pic':['(b)', '(c) 38-34Ma proxy data','(g) HR2','(h) LR2'],
-          '4pic':['(e)', '(f) 42-38Ma proxy data','(i) HR4','(j) LR4']}
+panell = {'2pic':['(b)', '(c) 38-34 Ma proxy data','(g) HR2','(h) LR2'],
+          '4pic':['(e)', '(f) 42-38 Ma proxy data','(i) HR4','(j) LR4']}
 
 # Define the inner grids
 
@@ -353,7 +347,9 @@ mtf.plot_merT(file4, file24, ax14, ax24, ax34,  ax142,
               panell=panell, config='4pic')
         
 if(True):
+    plt.savefig('SSTdiff_merT.tif', 
+                dpi=400,bbox_inches='tight',pad_inches=0)
     plt.savefig('SSTdiff_merT.png', 
-                dpi=300,bbox_inches='tight',pad_inches=0)
+                dpi=400,bbox_inches='tight',pad_inches=0)
 
 plt.show()
